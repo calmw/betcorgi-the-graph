@@ -1,0 +1,71 @@
+type BetEvent  @entity {
+    id: ID!
+    gameId:BigInt!
+    autoId:BigInt!
+    orderId:BigInt!
+    user: Bytes!
+    tokenId:BigInt!
+    amount:BigInt!
+    data:Bytes!
+    txHash:Bytes!
+    timestamp:BigInt!
+    utcTime:String!
+}
+
+type DrawEvent @entity {
+    id: ID!
+    gameId:BigInt!
+    orderId:BigInt!
+    status:BigInt!
+    user: Bytes!
+    bonus:BigInt!
+    refund:BigInt!
+    txHash:Bytes!
+    timestamp:BigInt!
+    utcTime:String!
+}
+
+type AutoBetEvent  @entity {
+    id: ID!
+    autoBetId:BigInt!
+    gameId:BigInt!
+    user: Bytes!
+    totalAmount:BigInt!
+    winThreshold:BigInt!
+    lossThreshold:BigInt!
+    addWhenWin:BigInt!
+    addWhenLoss:BigInt!
+    txHash:Bytes!
+    timestamp:BigInt!
+    utcTime:String!
+}
+
+type AutoBetReturnEvent @entity {
+    id: ID!
+    autoBetId:BigInt!
+    gameId:BigInt!
+    amount:BigInt!
+    txHash:Bytes!
+    timestamp:BigInt!
+    utcTime:String!
+}
+
+type PoolAddEvent @entity {
+    id: ID!
+    user: Bytes!
+    orderId:BigInt!
+    amount:BigInt!
+    txHash:Bytes!
+    timestamp:BigInt!
+    utcTime:String!
+}
+
+type PoolBonusEvent @entity {
+    id: ID!
+    user: Bytes!
+    poolId:BigInt!
+    amount:BigInt!
+    txHash:Bytes!
+    timestamp:BigInt!
+    utcTime:String!
+}
