@@ -1,0 +1,1102 @@
+{
+  "address": "CeEk3TZnjnbT71ojoSPUFw3z7t9wQ8sL3xwWNoecCKtb",
+  "metadata": {
+    "name": "betcorgi",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "auto_bet",
+      "docs": [
+        "自动投注实现",
+        "# 参数",
+        "* `times` - 投注次数",
+        "* `game_id` - 游戏ID",
+        "* `amount` - 单次投注金额，以lamport为单位",
+        "* `profit_stop` - 止盈金额，以lamport为单位",
+        "* `lost_stop` - 止损金额，以lamport为单位",
+        "* `add_when_win` - 赢后增加投注金额的百分比(1-99)",
+        "* `add_when_lose` - 输后增加投注金额的百分比(1-99)",
+        "* `hash` - 投注hash",
+        "* `data` - 投注数据",
+        "",
+        "# 返回",
+        "* `Result<()>` - 操作结果"
+      ],
+      "discriminator": [
+        189,
+        192,
+        32,
+        185,
+        227,
+        117,
+        114,
+        102
+      ],
+      "accounts": [
+        {
+          "name": "player",
+          "docs": [
+            "玩家账户,必须是签名者"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "escrow_account",
+          "docs": [
+            "托管账户"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  116,
+                  101,
+                  69,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "game_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  109,
+                  101,
+                  67,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "game_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "game_id",
+          "type": "u64"
+        },
+        {
+          "name": "times",
+          "type": "u16"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        },
+        {
+          "name": "profit_stop",
+          "type": "u64"
+        },
+        {
+          "name": "lost_stop",
+          "type": "u64"
+        },
+        {
+          "name": "add_when_win",
+          "type": "u8"
+        },
+        {
+          "name": "add_when_lose",
+          "type": "u8"
+        },
+        {
+          "name": "hash",
+          "type": "string"
+        },
+        {
+          "name": "data",
+          "type": "bytes"
+        }
+      ]
+    },
+    {
+      "name": "bet",
+      "docs": [
+        "玩家投注",
+        "",
+        "# 参数",
+        "* `ctx` - 投注的上下文",
+        "* `game_type` - 游戏类型 0:单次投注游戏 1:多次投注游戏",
+        "* `game_id` - 游戏ID",
+        "* `amount` - 投注金额",
+        "* `hash` - 投注hash",
+        "* `data` - 投注数据",
+        "",
+        "# 返回",
+        "* `Result<()>` - 操作结果"
+      ],
+      "discriminator": [
+        94,
+        203,
+        166,
+        126,
+        20,
+        243,
+        169,
+        82
+      ],
+      "accounts": [
+        {
+          "name": "player",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "escrow_account",
+          "docs": [
+            "托管账户，用于存储投注资金"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  116,
+                  101,
+                  69,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "game_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  109,
+                  101,
+                  67,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "game_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "game_id",
+          "type": "u64"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        },
+        {
+          "name": "hash",
+          "type": "string"
+        },
+        {
+          "name": "data",
+          "type": "bytes"
+        }
+      ]
+    },
+    {
+      "name": "draw",
+      "docs": [
+        "服务端开奖函数",
+        "只对单局单次生成PDA账户",
+        "单局多次投注由服务端调合约提现方法进行Multicall转账给玩家",
+        "",
+        "# 参数",
+        "* `ctx` - 开奖的上下文",
+        "* `order_id` - 订单ID",
+        "* `rate` - 赔率，扩大10000倍，实际计算 rate/10000",
+        "* `hash_expired` - hash是否过期",
+        "",
+        "# 返回",
+        "* `Result<()>` - 操作结果"
+      ],
+      "discriminator": [
+        61,
+        40,
+        62,
+        184,
+        31,
+        176,
+        24,
+        130
+      ],
+      "accounts": [
+        {
+          "name": "server",
+          "docs": [
+            "服务端账户，必须是签名者"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "player_account",
+          "docs": [
+            "玩家账户，用于接收奖励"
+          ],
+          "writable": true
+        },
+        {
+          "name": "escrow_account",
+          "docs": [
+            "托管账户，用于存储和分发奖金"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  116,
+                  101,
+                  69,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "game_id",
+          "type": "u64"
+        },
+        {
+          "name": "order_id",
+          "type": "u64"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        },
+        {
+          "name": "seed",
+          "type": "string"
+        },
+        {
+          "name": "hash_expired",
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "name": "init_escrow",
+      "docs": [
+        "创建改托管账户,合约部署完立即调用",
+        "",
+        "# 参数",
+        "* `ctx` - 创建或修改托管账户的上下文",
+        "",
+        "# 返回",
+        "* `Result<()>` - 操作结果"
+      ],
+      "discriminator": [
+        70,
+        46,
+        40,
+        23,
+        6,
+        11,
+        81,
+        139
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "docs": [
+            "支付创建账户费用的签名者"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "escrow_account",
+          "docs": [
+            "托管账户，如果不存在则初始化"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  116,
+                  101,
+                  69,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "program_data",
+          "docs": [
+            "CHECK Program Data Account - 作为 UncheckedAccount 传入，手动验证和读取升级权限"
+          ]
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "init_game_config",
+      "docs": [
+        "更新投注参数",
+        "",
+        "# 参数",
+        "* `ctx` - 初始化投注参数的上下文",
+        "* `game_id` - 游戏id",
+        "* `max_bet` - 最大投注金额",
+        "* `min_bet` - 最小投注金额",
+        "* `is_game_enabled` - 游戏设置",
+        "",
+        "# 返回",
+        "* `Result<()>` - 操作结果"
+      ],
+      "discriminator": [
+        120,
+        70,
+        240,
+        103,
+        174,
+        250,
+        153,
+        228
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "escrow_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  116,
+                  101,
+                  69,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "game_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  109,
+                  101,
+                  67,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "game_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "game_id",
+          "type": "u64"
+        },
+        {
+          "name": "max_bet",
+          "type": "u64"
+        },
+        {
+          "name": "min_bet",
+          "type": "u64"
+        },
+        {
+          "name": "is_game_enabled",
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "name": "update_authorized_pubkey",
+      "docs": [
+        "更新授权公钥",
+        "",
+        "# 参数",
+        "* `ctx` - 更新授权公钥的上下文",
+        "* `new_authorized_pubkey` - 新的授权公钥",
+        "",
+        "# 返回",
+        "* `Result<()>` - 操作结果"
+      ],
+      "discriminator": [
+        75,
+        253,
+        160,
+        94,
+        28,
+        231,
+        40,
+        8
+      ],
+      "accounts": [
+        {
+          "name": "escrow_account",
+          "docs": [
+            "需要更新的托管账户"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  116,
+                  101,
+                  69,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "docs": [
+            "授权的签名者，必须与托管账户中的当前授权公钥匹配"
+          ],
+          "signer": true
+        }
+      ],
+      "args": [
+        {
+          "name": "new_authorized_pubkey",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "update_game_config",
+      "docs": [
+        "更新授权公钥",
+        "",
+        "# 参数",
+        "* `ctx` - 更新游戏的投注金额",
+        "* `game_id` - 游戏id",
+        "* `max_bet` - 新的最大投注金额",
+        "* `min_bet` - 新的最小投注金额",
+        "* `is_game_enabled` - 游戏设置",
+        "",
+        "# 返回",
+        "* `Result<()>` - 操作结果"
+      ],
+      "discriminator": [
+        180,
+        82,
+        7,
+        205,
+        89,
+        182,
+        61,
+        128
+      ],
+      "accounts": [
+        {
+          "name": "escrow_account",
+          "docs": [
+            "托管账户"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  116,
+                  101,
+                  69,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "game_config",
+          "docs": [
+            "游戏配置账户"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  109,
+                  101,
+                  67,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "game_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "docs": [
+            "授权的签名者，必须与托管账户中的授权公钥匹配"
+          ],
+          "signer": true
+        }
+      ],
+      "args": [
+        {
+          "name": "game_id",
+          "type": "u64"
+        },
+        {
+          "name": "max_bet",
+          "type": {
+            "option": "u64"
+          }
+        },
+        {
+          "name": "min_bet",
+          "type": {
+            "option": "u64"
+          }
+        },
+        {
+          "name": "enable",
+          "type": {
+            "option": "bool"
+          }
+        }
+      ]
+    },
+    {
+      "name": "withdraw_account",
+      "docs": [
+        "从资金账户提现（项目预留）",
+        "",
+        "# 参数",
+        "* `ctx` - 提现的上下文",
+        "* `amount` - 提现金额",
+        "",
+        "# 返回",
+        "* `Result<()>` - 操作结果"
+      ],
+      "discriminator": [
+        58,
+        170,
+        128,
+        88,
+        227,
+        151,
+        120,
+        95
+      ],
+      "accounts": [
+        {
+          "name": "escrow_account",
+          "docs": [
+            "托管账户，用于存储和管理资金"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  116,
+                  101,
+                  69,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "withdrawer",
+          "docs": [
+            "提现者，必须是授权的公钥"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "EscrowAccount",
+      "discriminator": [
+        36,
+        69,
+        48,
+        18,
+        128,
+        225,
+        125,
+        135
+      ]
+    },
+    {
+      "name": "GameConfigAccount",
+      "discriminator": [
+        10,
+        255,
+        244,
+        212,
+        240,
+        238,
+        211,
+        53
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "AuthorizedPubkeyUpdated",
+      "discriminator": [
+        177,
+        58,
+        213,
+        121,
+        21,
+        131,
+        23,
+        125
+      ]
+    },
+    {
+      "name": "AutoBetPlaced",
+      "discriminator": [
+        238,
+        139,
+        122,
+        188,
+        178,
+        41,
+        132,
+        43
+      ]
+    },
+    {
+      "name": "BetPlaced",
+      "discriminator": [
+        88,
+        88,
+        145,
+        226,
+        126,
+        206,
+        32,
+        0
+      ]
+    },
+    {
+      "name": "WithdrawExecuted",
+      "discriminator": [
+        132,
+        197,
+        103,
+        54,
+        18,
+        141,
+        117,
+        0
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "Unauthorized",
+      "msg": "Unauthorized,forbidden"
+    },
+    {
+      "code": 6001,
+      "name": "NotEnoughFundsToPlay"
+    },
+    {
+      "code": 6002,
+      "name": "AlreadyInitAccount"
+    },
+    {
+      "code": 6003,
+      "name": "InvalidBetConfig"
+    },
+    {
+      "code": 6004,
+      "name": "InvalidBetAmount"
+    },
+    {
+      "code": 6005,
+      "name": "InsufficientFunds"
+    },
+    {
+      "code": 6006,
+      "name": "InvalidHash"
+    },
+    {
+      "code": 6007,
+      "name": "HashExpired"
+    },
+    {
+      "code": 6008,
+      "name": "GameNotEnabled"
+    },
+    {
+      "code": 6009,
+      "name": "UnauthorizedAccess",
+      "msg": "Unauthorized access - caller is not the upgrade authority"
+    },
+    {
+      "code": 6010,
+      "name": "InvalidProgramData",
+      "msg": "Invalid program data account"
+    },
+    {
+      "code": 6011,
+      "name": "NoUpgradeAuthority",
+      "msg": "Program has no upgrade authority"
+    }
+  ],
+  "types": [
+    {
+      "name": "AuthorizedPubkeyUpdated",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "old_pubkey",
+            "type": "pubkey"
+          },
+          {
+            "name": "new_pubkey",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "AutoBetPlaced",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "player",
+            "type": "pubkey"
+          },
+          {
+            "name": "order_id",
+            "type": "u64"
+          },
+          {
+            "name": "game_id",
+            "type": "u64"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "profit_stop",
+            "type": "u64"
+          },
+          {
+            "name": "lost_stop",
+            "type": "u64"
+          },
+          {
+            "name": "add_when_win",
+            "type": "u8"
+          },
+          {
+            "name": "add_when_lose",
+            "type": "u8"
+          },
+          {
+            "name": "hash",
+            "type": "string"
+          },
+          {
+            "name": "data",
+            "type": "bytes"
+          }
+        ]
+      }
+    },
+    {
+      "name": "BetPlaced",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "game_id",
+            "type": "u64"
+          },
+          {
+            "name": "player",
+            "type": "pubkey"
+          },
+          {
+            "name": "order_id",
+            "type": "u64"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "hash",
+            "type": "string"
+          },
+          {
+            "name": "data",
+            "type": "bytes"
+          }
+        ]
+      }
+    },
+    {
+      "name": "EscrowAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "order_id",
+            "docs": [
+              "订单ID，合约维护每次下注自增1"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "draw_count",
+            "docs": [
+              "drawCount有开奖（赢/输）都++"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "win_count",
+            "docs": [
+              "winCount只有倍率>0才++"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "authorized_pubkey",
+            "docs": [
+              "授权公钥，即服务端公钥,后续用于调用验证"
+            ],
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "GameConfigAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "game_id",
+            "docs": [
+              "游戏ID"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "max_bet_amount",
+            "docs": [
+              "最大投注金额"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "min_bet_amount",
+            "docs": [
+              "最小投注金额"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "is_game_enabled",
+            "docs": [
+              "是否开启游戏（开启游戏之后可以进行下注）"
+            ],
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "WithdrawExecuted",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "withdrawer",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          }
+        ]
+      }
+    }
+  ]
+}

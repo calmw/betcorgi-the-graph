@@ -3,19 +3,9 @@
   "license": "MIT",
   "scripts": {
     "build_dev": "rm -rf subgraph.yaml && cp subgraph-dev.yaml subgraph.yaml && graph codegen && graph build",
-    "create_dev": "graph create corgi_bet --node http://18.181.188.151:8020",
-    "deploy_dev": "graph deploy corgi_bet --ipfs http://18.181.188.151:5001 --node http://18.181.188.151:8020",
-    "remove_dev": "graph remove corgi_bet --node http://18.181.188.151:8020",
-
-    "build_test": "rm -rf subgraph.yaml && cp subgraph-dev.yaml subgraph.yaml && graph codegen && graph build",
-    "create_test": "graph create corgi_bet --node http://18.138.210.124:8020",
-    "deploy_test": "graph deploy corgi_bet --ipfs http://18.138.210.124:5001 --node http://18.138.210.124:8020",
-    "remove_test": "graph remove corgi_bet --node http://18.138.210.124:8020",
-
-    "build_local": "rm -rf subgraph.yaml && cp subgraph-dev.yaml subgraph.yaml && graph codegen && graph build",
-    "create_local": "graph create corgi_bet --node http://127.0.0.1:8020",
-    "deploy_local": "graph deploy corgi_bet --ipfs http://127.0.0.1:5001 --node http://127.0.0.1:8020",
-    "remove_local": "graph remove corgi_bet --node http://127.0.0.1:8020"
+    "create_dev": "graph create corgi_bet_solana --node http://18.181.188.151:8020",
+    "deploy_dev": "graph deploy corgi_bet_solana --ipfs http://18.181.188.151:5001 --node http://18.181.188.151:8020",
+    "remove_dev": "graph remove corgi_bet_solana --node http://18.181.188.151:8020"
   },
   "dependencies": {
     "@graphprotocol/graph-ts": "^0.29.1"
