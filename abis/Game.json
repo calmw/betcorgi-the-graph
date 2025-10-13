@@ -59,12 +59,6 @@
         "internalType": "address",
         "name": "user",
         "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "parent",
-        "type": "address"
       }
     ],
     "name": "BindParentEvent",
@@ -238,10 +232,23 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "feeAddress_",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "gameId",
+        "type": "uint256"
       },
+      {
+        "internalType": "bool",
+        "name": "betSwitch_",
+        "type": "bool"
+      }
+    ],
+    "name": "admin_set_bet_switch",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
       {
         "internalType": "address",
         "name": "tokenAddress_",
@@ -259,13 +266,13 @@
       },
       {
         "internalType": "address",
-        "name": "jackPotAddress_",
+        "name": "gameCategoryAddress_",
         "type": "address"
       },
       {
-        "internalType": "address",
-        "name": "gameCategoryAddress_",
-        "type": "address"
+        "internalType": "bool",
+        "name": "betSwitch_",
+        "type": "bool"
       }
     ],
     "name": "admin_set_env",
@@ -360,8 +367,40 @@
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "betSingleSwitch",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "betSwitch",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
-        "name": "parent_address",
+        "name": "user_address",
         "type": "address"
       }
     ],
@@ -412,7 +451,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "rate",
+        "name": "amount",
         "type": "uint256"
       },
       {
@@ -424,6 +463,25 @@
     "name": "draw",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "drawData",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -478,7 +536,7 @@
       },
       {
         "internalType": "uint256[]",
-        "name": "rate",
+        "name": "amount",
         "type": "uint256[]"
       },
       {
@@ -490,19 +548,6 @@
     "name": "draw_batch",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "fee",
-    "outputs": [
-      {
-        "internalType": "contract IFee",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -607,19 +652,6 @@
   },
   {
     "inputs": [],
-    "name": "jackPot",
-    "outputs": [
-      {
-        "internalType": "contract IJackpot",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "order",
     "outputs": [
       {
@@ -718,25 +750,6 @@
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "userParent",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
       }
     ],
     "stateMutability": "view",

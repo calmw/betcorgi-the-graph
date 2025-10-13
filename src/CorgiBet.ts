@@ -1,6 +1,5 @@
 import {BetEvent as BetLog, DrawEvent as DrawLog,} from "../generated/Order/Order"
 import {AutoBetEvent as AutoBet, AutoBetReturnEvent as AutoBetReturn,} from "../generated/AutoBet/AutoBet"
-import {PoolAddEvent as PoolAdd, PoolBonusEvent as PoolBonus,} from "../generated/Jackpot/Jackpot"
 import {AutoBetEvent, AutoBetReturnEvent, BetEvent, DrawEvent,PoolAddEvent,PoolBonusEvent} from "../generated/schema"
 import {timestampToDatetime} from "./utils/constants";
 import {BigInt} from "@graphprotocol/graph-ts";
@@ -54,28 +53,6 @@ export function handleAutoBetReturnEvent(event: AutoBetReturn): void {
     let obj = new AutoBetReturnEvent(createEventID(event.block.number, event.logIndex))
     obj.autoBetId = event.params.autoBetId
     obj.gameId = event.params.gameId
-    obj.amount = event.params.amount
-    obj.txHash = event.transaction.hash
-    obj.timestamp = event.block.timestamp
-    obj.utcTime = timestampToDatetime(event.block.timestamp.toI64())
-    obj.save()
-}
-
-export function handlePoolAddEvent(event: PoolAdd): void {
-    let obj = new PoolAddEvent(createEventID(event.block.number, event.logIndex))
-    obj.user = event.params.user
-    obj.orderId = event.params.orderId
-    obj.amount = event.params.amount
-    obj.txHash = event.transaction.hash
-    obj.timestamp = event.block.timestamp
-    obj.utcTime = timestampToDatetime(event.block.timestamp.toI64())
-    obj.save()
-}
-
-export function handlePoolBonusEvent(event: PoolBonus): void {
-    let obj = new PoolBonusEvent(createEventID(event.block.number, event.logIndex))
-    obj.poolId = event.params.poolId
-    obj.user = event.params.user
     obj.amount = event.params.amount
     obj.txHash = event.transaction.hash
     obj.timestamp = event.block.timestamp

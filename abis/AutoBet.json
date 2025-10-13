@@ -279,6 +279,11 @@
         "internalType": "address",
         "name": "gameAddress_",
         "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "autoBetSwitch_",
+        "type": "bool"
       }
     ],
     "name": "admin_set_env",
@@ -394,6 +399,19 @@
     "name": "autoBetReturn",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "autoBetSwitch",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
